@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.newland.wechat.mapper.WeixinAuthorizeMapper">
+	<select id="quaryAuthorizerAccessTokenInvalid" resultType="com.newland.wechat.entity.WeixinAuthorize">
+		select * from t_wechat_authorize t where TIMESTAMPDIFF(MINUTE, t.authorizer_access_token_time,now())&gt;115 and status = '1'
+	</select>
+</mapper>
