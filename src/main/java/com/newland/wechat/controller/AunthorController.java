@@ -18,6 +18,7 @@ import com.newland.wechat.utils.WeChatApiUtil;
 public class AunthorController {
 	@Autowired
 	private WeChatApiUtil weChatApiUtil;
+	
 	@RequestMapping(value="/{version}/uploadFile", method = RequestMethod.POST)
 	public ResponseModel uploadFile(HttpServletRequest request,MultipartFile fileUpload) throws IllegalStateException, IOException {
 		ResponseModel resp = new ResponseModel();

@@ -1,9 +1,11 @@
 package com.newland.wechat.model;
 
 public class ApiComponentToken {
+	
 	private String component_appid;
 	private String component_appsecret;
 	private String component_verify_ticket;
+	
 	public String getComponent_appid() {
 		return component_appid;
 	}

@@ -7,10 +7,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.newland.wechat.base.BaseService;
 import com.newland.wechat.entity.CardConsumeDetail;
 import com.newland.wechat.entity.CardConsumeInfo;
 import com.newland.wechat.model.response.ResponseModel;
-import com.newland.wechat.service.BaseService;
 import com.newland.wechat.service.CardConsumeDetailService;
 import com.newland.wechat.service.CardConsumeInfoService;
 @Service("cardConsumeDetailService")

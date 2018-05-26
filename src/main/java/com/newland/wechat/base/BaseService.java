@@ -1,4 +1,4 @@
-package com.newland.wechat.service;
+package com.newland.wechat.base;
 
 import java.util.List;
 import java.util.Map;

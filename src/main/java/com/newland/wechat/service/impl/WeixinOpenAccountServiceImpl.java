@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.newland.wechat.base.BaseService;
 import com.newland.wechat.common.Constants;
 import com.newland.wechat.entity.CardInfo;
 import com.newland.wechat.entity.WeixinAuthorize;
@@ -35,7 +35,6 @@ import com.newland.wechat.exception.WexinReqException;
 import com.newland.wechat.mapper.WeixinOpenAccountMapper;
 import com.newland.wechat.model.ApiComponentToken;
 import com.newland.wechat.model.response.ResponseModel;
-import com.newland.wechat.service.BaseService;
 import com.newland.wechat.service.CardInfoService;
 import com.newland.wechat.service.WeixinAuthorizeService;
 import com.newland.wechat.service.WeixinOpenAccountService;
@@ -89,7 +88,7 @@ public class WeixinOpenAccountServiceImpl extends BaseService<WeixinOpenAccount>
         String timestamp = request.getParameter("timestamp"); //时间戳 
         String signature = request.getParameter("signature");  //微信加密签名
         String msgSignature = request.getParameter("msg_signature");
-        log.info("======processAuthorizeEvent{}处理授权事件的推送  获取参数 nonce：{} ,timestamp :{},signature :{} ,msgSignature:{} =======",nonce,timestamp,signature,msgSignature);  
+        log.info("======processAuthorizeEvent处理授权事件的推送  获取参数 nonce：{} ,timestamp :{},signature :{} ,msgSignature:{} =======",nonce,timestamp,signature,msgSignature);  
         if (StringUtils.isBlank(msgSignature)){  
             return;// 微信推送给第三方开放平台的消息一定是加过密的，无消息加密无法解密消息  
         }else{
@@ -148,18 +147,18 @@ public class WeixinOpenAccountServiceImpl extends BaseService<WeixinOpenAccount>
      * @param xml 
      */  
     public void processAuthorizationEvent(String xml){ 
-    	 log.info("======processAuthorizationEvent 开始解析并保存ticket========xml:{}======",xml.toString());  
+    	log.info("======processAuthorizationEvent 开始解析并保存ticket========xml:{}======",xml.toString());  
         Document doc;  
         try {  
-            doc = DocumentHelper.parseText(xml);  
-            Element rootElt = doc.getRootElement();  
-            String ticket = rootElt.elementText("ComponentVerifyTicket");  
-            if(StringUtils.isNotEmpty(ticket)){  
-                log.info("======processAuthorizationEvent 推送component_verify_ticket协议===========ticket:{}====== ",ticket);  
-                WeixinOpenAccount  entity = new WeixinOpenAccount();  
-                entity.setTicket(ticket);  
-                entity.setAppId(Constants.COMPONENT_APPID);  
-                entity.setGetTicketTime(new Date());  
+            doc = DocumentHelper.parseText(xml);
+            Element rootElt = doc.getRootElement();
+            String ticket = rootElt.elementText("ComponentVerifyTicket");
+            if(StringUtils.isNotEmpty(ticket)){
+                log.info("======processAuthorizationEvent 推送component_verify_ticket协议===========ticket:{}====== ",ticket);
+                WeixinOpenAccount entity = new WeixinOpenAccount();
+                entity.setTicket(ticket);
+                entity.setAppId(Constants.COMPONENT_APPID);
+                entity.setGetTicketTime(new Date());
                 try{
                 	saveOrUpdate(entity);  
                 }catch(Exception e){
@@ -204,42 +203,8 @@ public class WeixinOpenAccountServiceImpl extends BaseService<WeixinOpenAccount>
        
     }  
      
-      
-    public void checkWeixinAllNetworkCheck(HttpServletRequest request, HttpServletResponse response,String xml) throws DocumentException, IOException, AesException, ParseException{  
-    	log.info("======checkWeixinAllNetworkCheck全网发布接入检测消息=========");  
-    	String nonce = request.getParameter("nonce");  
-        String timestamp = request.getParameter("timestamp");  
-        String msgSignature = request.getParameter("msg_signature");  
-        
-        WXBizMsgCrypt pc = new WXBizMsgCrypt(Constants.COMPONENT_TOKEN, Constants.COMPONENT_ENCODINGAESKEY, Constants.COMPONENT_APPID);  
-        xml = pc.DecryptMsg(msgSignature, timestamp, nonce, xml);  
-        
-        Document doc = DocumentHelper.parseText(xml);  
-        Element rootElt = doc.getRootElement();  
-        String msgType = rootElt.elementText("MsgType");  
-        String toUserName = rootElt.elementText("ToUserName");  
-        String fromUserName = rootElt.elementText("FromUserName");  
-        
-        log.info("======全网发布接入检测==step.1===========msgType:{},toUserName:{},fromUserName:{}======",msgType,toUserName,fromUserName);  
-        log.info("======全网发布接入检测==step.2===========xml:{}======",xml);  
-        if("event".equals(msgType)){  
-        	log.info("======全网发布接入检测==step.3===========事件消息========");  
-             String event = rootElt.elementText("Event");  
-             replyEventMessage(request,response,event,toUserName,fromUserName,rootElt);  
-        }else if("text".equals(msgType)){  
-        	log.info("======全网发布接入检测==step.3===========文本消息========");  
-             String content = rootElt.elementText("Content");  
-             processTextMessage(request,response,content,toUserName,fromUserName);  
-        }  
-    }  
-      
-      
     public void replyEventMessage(HttpServletRequest request, HttpServletResponse response, String event, String toUserName, String fromUserName,Element rootElt) throws DocumentException, IOException {  
-    	if (StringUtils.equalsIgnoreCase(toUserName, Constants.APPID)){
-    		String content = event + "from_callback";  
-	        log.info("===全网发布接入检测======step.4=======事件回复消息  content="+content + "   toUserName="+toUserName+"   fromUserName="+fromUserName);  
-	        replyTextMessage(request,response,content,toUserName,fromUserName);
-    	}
+    	
         CardInfo card = new CardInfo();
     	if(Constants.USER_GET_CARD.equals(event)){
         	//用户领取卡券
@@ -248,7 +213,6 @@ public class WeixinOpenAccountServiceImpl extends BaseService<WeixinOpenAccount>
         	String IsGiveByFriend = rootElt.elementText("IsGiveByFriend");
         	if("0".equals(IsGiveByFriend)){
         		//是否为转赠领取，1代表是，0代表否。
-        		log.info("======全网发布接入检测======用户领取卡券不是其他用户转赠======cardId:{}=======",rootElt.elementText("CardId")); 
         		card.setCode(rootElt.elementText("UserCardCode"));
     			card.setCardId(card_id);
     			card.setPushGetCardStatusTime(new Date());
@@ -296,6 +260,10 @@ public class WeixinOpenAccountServiceImpl extends BaseService<WeixinOpenAccount>
     		}else{
     			card.setPushExamineStatus("N");
     		}
+        }else if(Constants.SCAN.equals(event)) {
+        	String parameter = rootElt.elementText("EventKey");
+        	String returnContent = "&lt;a href=&quot;http://www.baidu.com&quot;&gt;点我绑定星管家帐号领积分&lt;/a&gt;";
+            replyTextMessage(request,response,returnContent,toUserName,fromUserName);
         }
     	try{
     	cardInfoService.saveOrUpdateCardInfo(card);
@@ -374,7 +342,8 @@ public class WeixinOpenAccountServiceImpl extends BaseService<WeixinOpenAccount>
         sb.append("<FromUserName><![CDATA["+toUserName+"]]></FromUserName>");  
         sb.append("<CreateTime>"+createTime+"</CreateTime>");  
         sb.append("<MsgType><![CDATA[text]]></MsgType>");  
-        sb.append("<Content><![CDATA["+content+"]]></Content>");  
+//        sb.append("<Content><![CDATA["+content+"]]></Content>");
+        sb.append("<Content>"+content+"</Content>");
         sb.append("</xml>");  
         String replyMsg = sb.toString();  
           
@@ -396,12 +365,12 @@ public class WeixinOpenAccountServiceImpl extends BaseService<WeixinOpenAccount>
      */  
     public void output(HttpServletResponse response,String returnvaleue){  
         try {  
-            PrintWriter pw = response.getWriter();  
-            pw.write(returnvaleue);  
+            PrintWriter pw = response.getWriter();
+            pw.write(returnvaleue);
             log.info("****************returnvaleue***************="+returnvaleue);  
-            pw.flush();  
-        } catch (IOException e) {  
-            e.printStackTrace();  
+            pw.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
         }  
     }  
       

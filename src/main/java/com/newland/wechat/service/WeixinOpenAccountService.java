@@ -54,9 +54,6 @@ public interface WeixinOpenAccountService {
      */  
     String getAuthorizerAppidFromXml(String xml) ;
      
-      
-    public void checkWeixinAllNetworkCheck(HttpServletRequest request, HttpServletResponse response,String xml) throws DocumentException, IOException, AesException,ParseException;  
-      
      /**
       * 回复事件
       * @param request

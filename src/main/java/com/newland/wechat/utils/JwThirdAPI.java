@@ -55,7 +55,7 @@ public class JwThirdAPI {
 		WeixinOpenAccount weixinOpenAccount = weixinOpenAccountService.quaryOpenAccount();
 		if(weixinOpenAccount != null &&weixinOpenAccount.getAccessTokenTime()!= null){
 			int time = DateUtils.daysBetween(weixinOpenAccount.getAccessTokenTime(),new Date());
-			if(time<119){
+			if(time < 119){
 				//第三方平台component_access_token有效期（2小时）,两小时以内直接返回
 				return weixinOpenAccount.getAccessToken();
 			}
@@ -143,7 +143,7 @@ public class JwThirdAPI {
 	 * @param apiAuthorizerToken
 	 * @param component_access_token
 	 */
-	public  ApiAuthorizerTokenRet apiAuthorizerToken(ApiAuthorizerToken apiAuthorizerToken,String component_access_token) throws WexinReqException{
+	public ApiAuthorizerTokenRet apiAuthorizerToken(ApiAuthorizerToken apiAuthorizerToken,String component_access_token) throws WexinReqException{
 		String requestUrl = PropertyUtils.getApiAuthorizerTokenUrl(component_access_token);
 		JSONObject param = JSONObject.fromObject(apiAuthorizerToken);
 		JSONObject result = WxstoreUtils.httpRequest(requestUrl,"POST", param.toString());

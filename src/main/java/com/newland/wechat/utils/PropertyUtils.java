@@ -99,6 +99,11 @@ public class PropertyUtils {
 	/*public static String quaryStoreInfoUrl(){
 		return ((String)PropertyPlaceholder.getProperty("wechat.queryStoreInfoUrl"));
 	}*/
+	//创建二维码
+	public static String getCreateQrCodeUrl(String access_token){
+		return ((String)PropertyPlaceholder.getProperty("get_create_qrcode_url")).replace("ACCESS_TOKEN", access_token);
+	}
+	
 	/**
 	 * 卡券列表
 	 * @param access_token

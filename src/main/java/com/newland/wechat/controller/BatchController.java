@@ -15,7 +15,7 @@ public class BatchController {
 	//定时刷新令牌
 	public void getAuthorizerAccessToken() throws WexinReqException, ParseException{
 		
-		batchService.batchUpdateAuthorizerAccessToken();
+//		batchService.batchUpdateAuthorizerAccessToken();
 		
 		/*batchService.batchUpdateComponentAccessToken();*/
 		

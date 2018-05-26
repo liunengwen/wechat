@@ -13,24 +13,27 @@ public final class Constants {
 
     // MD5
     public static final String SIGN_TYPE_MD5 = "MD5";
+    
     //测试环境
-    /*public static final   String COMPONENT_APPID = "wx5ab5d6f102803474";  
+    public static final  String COMPONENT_APPID = "wx5ab5d6f102803474";  
     public static final  String COMPONENT_APPSECRET = "664be25987338ea1832a6e312aeb4ae8";  
     public static final  String COMPONENT_ENCODINGAESKEY = "H0fCrx8qUvpkiqXKryHbm9yY9IxRJBsHfTYlHpL04ZT";  
-    public static final  String COMPONENT_TOKEN = "developerStarpos"; */ 
+    public static final  String COMPONENT_TOKEN = "developerStarpos";  
     
     //生产环境
-    public static final   String COMPONENT_APPID = "wx5b736af140f4848d";  
+    /*public static final   String COMPONENT_APPID = "wx5b736af140f4848d";  
     public static final  String COMPONENT_APPSECRET = "a519c0b1f0d889a6ff004aec7340e8ff";  
     public static final  String COMPONENT_ENCODINGAESKEY = "aUs7ca56gwOgVVdBmjq7GfafD8ePOhiOvTUIzcgi60Y";  
-    public static final  String COMPONENT_TOKEN = "newland123456";
+    public static final  String COMPONENT_TOKEN = "newland123456";*/
     //微信全网测试专用appId
     public static final   String APPID = "wx570bc396a51b8ff8";
+    
     public static final  String USER_GET_CARD = "user_get_card";
     public static final  String USER_GIFTING_CARD = "user_gifting_card";
     public static final  String USER_DEL_CARD = "user_del_card";
     public static final  String CARD_PASS_CHECK = "card_pass_check";
     public static final  String CARD_NOT_PASS_CHECK = "card_not_pass_check";
+    public static final  String SCAN = "SCAN";
     //上传媒体类型
     public static final  String video = "video";
     public static final  String image = "image";

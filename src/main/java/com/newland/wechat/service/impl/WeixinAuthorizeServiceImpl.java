@@ -12,12 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.newland.wechat.base.BaseService;
 import com.newland.wechat.common.Constants;
 import com.newland.wechat.emun.ExceptionCodeEnum;
 import com.newland.wechat.entity.WeixinAuthorize;
 import com.newland.wechat.mapper.WeixinAuthorizeMapper;
 import com.newland.wechat.model.response.ResponseModel;
-import com.newland.wechat.service.BaseService;
 import com.newland.wechat.service.WeixinAuthorizeService;
 import com.newland.wechat.service.WeixinOpenAccountService;
 import com.newland.wechat.utils.AppBeanUtils;

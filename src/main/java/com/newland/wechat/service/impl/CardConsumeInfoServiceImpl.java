@@ -6,8 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.newland.wechat.base.BaseService;
 import com.newland.wechat.entity.CardConsumeInfo;
-import com.newland.wechat.service.BaseService;
 import com.newland.wechat.service.CardConsumeInfoService;
 @Service("cardConsumeInfoService")
 public class CardConsumeInfoServiceImpl extends BaseService<CardConsumeInfo> implements CardConsumeInfoService{

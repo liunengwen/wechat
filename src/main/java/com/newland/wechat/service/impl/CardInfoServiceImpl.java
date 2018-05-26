@@ -8,8 +8,8 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
+import com.newland.wechat.base.BaseService;
 import com.newland.wechat.entity.CardInfo;
-import com.newland.wechat.service.BaseService;
 import com.newland.wechat.service.CardInfoService;
 @Service("cardInfoService")
 public class CardInfoServiceImpl extends BaseService<CardInfo> implements CardInfoService{

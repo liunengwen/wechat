@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.newland.wechat.common.Constants;
@@ -32,10 +33,12 @@ import com.newland.wechat.model.ApiGetAuthorizerRetAuthorizer;
 import com.newland.wechat.model.ApiGetAuthorizerRetAuthortion;
 import com.newland.wechat.model.BussinessInfo;
 import com.newland.wechat.model.response.ResponseModel;
+import com.newland.wechat.service.HandleEventOrText;
 import com.newland.wechat.service.WeixinAuthorizeService;
 import com.newland.wechat.service.WeixinOpenAccountService;
 import com.newland.wechat.service.third.HttpClientService;
 import com.newland.wechat.service.third.NotifyService;
+import com.newland.wechat.utils.DecryptFromWeXin;
 import com.newland.wechat.utils.JwThirdAPI;
 import com.newland.wechat.utils.PropertyUtils;
 import com.newland.wechat.utils.XMLParse;
@@ -66,6 +69,9 @@ public class OpenwxController {
     private HttpClientService httpClientService;
     @Autowired
     private NotifyService notifyService;
+    @Autowired
+    private HandleEventOrText handleEventOrText;
+    
      /** 
      * 授权事件接收 
      *  
@@ -79,7 +85,8 @@ public class OpenwxController {
     public void acceptAuthorizeEvent(HttpServletRequest request, HttpServletResponse response) throws IOException, AesException, DocumentException {  
     	log.info("======微信第三方平台=========微信推送Ticket消息10分钟一次========" + request);  
     	weixinOpenAccountService.processAuthorizeEvent(request);  
-    	weixinOpenAccountService.output(response, "success"); // 输出响应的内容。  
+//    	weixinOpenAccountService.output(response, "success"); // 输出响应的内容。
+    	response.getWriter().write("success");
     }  
       
     /** 
@@ -106,10 +113,9 @@ public class OpenwxController {
             log.info("======goAuthor一键授权功能获取登陆授权路径===========url:{}====== ",url);
             response.sendRedirect(url);
         }catch(Exception e){		
-        	log.error("======goAuthor一键授权功能异常======e:{} ",e.toString());  
+        	log.error("======goAuthor一键授权功能异常======e:{} ",e.toString()); 
         }
-              
-    }  
+    }
     /**
      * 消息及事件推送
      * @param request
@@ -119,22 +125,18 @@ public class OpenwxController {
      * @throws DocumentException
      * @throws ParseException
      */
-    @RequestMapping(value = "{appid}/callback")  
-    public void acceptMessageAndEvent(HttpServletRequest request, HttpServletResponse response) throws IOException, AesException, DocumentException, ParseException {  
-        String msgSignature = request.getParameter("msg_signature");  
-        log.info("======第三方平台全网发布============={appid}/callback===========验证开始msg_signature:{}======",msgSignature);  
-        if (!StringUtils.isNotBlank(msgSignature))  
-            return;// 微信推送给第三方开放平台的消息一定是加过密的，无消息加密无法解密消息  
-        //解析xml
-        String xml = XMLParse.getXmlFromRequest(request);  
-        Document doc = DocumentHelper.parseText(xml);  
-        Element rootElt = doc.getRootElement();  
-        String toUserName = rootElt.elementText("ToUserName");  
-        //微信全网测试账号  
-       /* if (StringUtils.equalsIgnoreCase(toUserName, Constants.APPID)) {*/  
-          log.info("======acceptMessageAndEvent全网发布接入检测消息反馈开始=========toUserName:{}======",toUserName);  
-          weixinOpenAccountService.checkWeixinAllNetworkCheck(request,response,xml);  
-        /*}*/  
+    @RequestMapping(value = "{appId}/callback")  
+    public void acceptMessageAndEvent(HttpServletRequest request, HttpServletResponse response, @PathVariable("appId")String appId) throws IOException {  
+        
+        log.info("Receive WeChat events or push notifications");
+        Element xml;
+        try {
+        	xml = DecryptFromWeXin.decryptMessage(request);
+        	handleEventOrText.process(request, response, xml, appId);
+		} catch (Exception e) {
+			log.error("decrypt message from weixin failed:", e.getMessage());
+			response.getWriter().write("success");// 回复
+		}
     }
     /**
      * 一键授权后回调地址
